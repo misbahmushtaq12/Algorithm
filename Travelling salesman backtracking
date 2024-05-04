@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+
+int graph[V][V] = {{0, 10, 15, 20},
+                   {10, 0, 35, 25},
+                   {15, 35, 0, 30},
+                   {20, 25, 30, 0}};
+
+int minCost = INT_MAX; // Variable to store the minimum cost of TSP
+
+bool visited[V]; // Array to keep track of visited vertices
+
+// Function to find the minimum of two values
+int min(int x, int y) {
+    return (x < y) ? x : y;
+}
+
+// Function to recursively solve TSP using backtracking
+void tsp(int currentVertex, int count, int cost) {
+    // If all vertices have been visited, update the minimum cost
+    if (count == V && graph[currentVertex][0]) {
+        minCost = min(minCost, cost + graph[currentVertex][0]);
+        return;
+    }
+
+    // Backtracking step
+    for (int i = 0; i < V; i++) {
+        if (!visited[i] && graph[currentVertex][i]) {
+            visited[i] = true;
+            tsp(i, count + 1, cost + graph[currentVertex][i]);
+            visited[i] = false; // Backtrack
+        }
+    }
+}
+
+// Driver program to test above function
+int main() {
+    // Mark the starting vertex as visited
+    visited[0] = true;
+
+    // Start from the first city (0) and compute the minimum cost using backtracking
+    tsp(0, 1, 0);
+
+    printf("Minimum cost of the Travelling Salesman Problem: %d\n", minCost);
+
+    return 0;
+}
