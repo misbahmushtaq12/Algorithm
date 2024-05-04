@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define N 8 // Size of the chessboard
+
+int board[N][N]; // Chessboard represented as a 2D array
+bool row[N], col[N], diag1[2 * N - 1], diag2[2 * N - 1]; // Arrays to keep track of occupied rows, columns, and diagonals
+
+// Function to check if a queen can be placed at position (row, col)
+bool isSafe(int row, int col) {
+    return !row[row] && !col[col] && !diag1[row + col] && !diag2[row - col + N - 1];
+}
+
+// Function to solve the N-Queens problem using backtracking
+bool solveNQueens(int col) {
+    // Base case: If all queens are placed, return true
+    if (col >= N)
+        return true;
+
+    // Try placing a queen in each row of the current column
+    for (int i = 0; i < N; i++) {
+        if (isSafe(i, col)) {
+            // Place the queen
+            board[i][col] = 1;
+            row[i] = true;
+            col[col] = true;
+            diag1[i + col] = true;
+            diag2[i - col + N - 1] = true;
+
+            // Recur to place queens in the remaining columns
+            if (solveNQueens(col + 1))
+                return true;
+
+            // If placing queen in board[i][col] doesn't lead to a solution, backtrack
+            board[i][col] = 0;
+            row[i] = false;
+            col[col] = false;
+            diag1[i + col] = false;
+            diag2[i - col + N - 1] = false;
+        }
+    }
+    // If queen cannot be placed in any row of the current column, return false
+    return false;
+}
+
+// Function to print the solution
+void printSolution() {
+    printf("Solution for %d-Queens problem:\n", N);
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            printf("%d ", board[i][j]);
+        printf("\n");
+    }
+}
+
+int main() {
+    // Initialize the chessboard
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++)
+            board[i][j] = 0;
+    }
+
+    // Solve the N-Queens problem
+    if (solveNQueens(0)) {
+        printSolution();
+    } else {
+        printf("No solution exists for %d-Queens problem\n", N);
+    }
+
+    return 0;
+}
