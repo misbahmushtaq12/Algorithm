@@ -1,0 +1,25 @@
+#include<stdio.h>
+#include<limits.h>
+
+// Returns the maximum value that can be obtained by cutting up the rod of length n
+int rodCutting(int price[], int n) {
+    int val[n+1];
+    val[0] = 0;
+
+    // Build the table val[] in bottom-up manner
+    for (int i = 1; i <= n; i++) {
+        int max_val = INT_MIN;
+        for (int j = 0; j < i; j++)
+            max_val = (max_val < price[j] + val[i-j-1]) ? price[j] + val[i-j-1] : max_val;
+        val[i] = max_val;
+    }
+
+    return val[n];
+}
+
+int main() {
+    int price[] = {1, 5, 8, 9, 10, 17, 17, 20};
+    int n = sizeof(price)/sizeof(price[0]);
+    printf("Maximum obtainable value by cutting up the rod is %d\n", rodCutting(price, n));
+    return 0;
+}
