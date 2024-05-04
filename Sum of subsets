@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Function to check if there is a subset of the given array with the given sum
+bool isSubsetSum(int arr[], int n, int sum) {
+    // If sum is 0, then there is an empty subset that satisfies the condition
+    if (sum == 0)
+        return true;
+    
+    // If there are no elements left in the array or sum becomes negative, return false
+    if (n == 0 || sum < 0)
+        return false;
+    
+    // If the last element is greater than the sum, then it can't be part of the subset
+    if (arr[n - 1] > sum)
+        return isSubsetSum(arr, n - 1, sum);
+
+    // Check if sum can be obtained by including the last element or excluding it
+    return isSubsetSum(arr, n - 1, sum) || isSubsetSum(arr, n - 1, sum - arr[n - 1]);
+}
+
+// Driver program to test above function
+int main() {
+    int arr[] = {3, 34, 4, 12, 5, 2};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int sum = 9;
+
+    if (isSubsetSum(arr, n, sum))
+        printf("There is a subset with sum %d\n", sum);
+    else
+        printf("No subset with sum %d\n", sum);
+
+    return 0;
+}
