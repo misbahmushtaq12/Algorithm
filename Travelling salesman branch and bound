@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+
+// Define a macro to find the minimum of two values
+#define min(a, b) ((a < b) ? a : b)
+
+// Define the cost matrix. A value graph[i][j] indicates the cost to go from vertex i to vertex j.
+int graph[V][V] = {
+    {0, 10, 15, 20},
+    {10, 0, 35, 25},
+    {15, 35, 0, 30},
+    {20, 25, 30, 0}
+};
+
+// Function to find the minimum cost path using branch and bound
+int tsp(int mask, int pos, int n, int dp[][V]) {
+    // If all cities are visited
+    if (mask == (1 << n) - 1) {
+        return graph[pos][0]; // Return to the starting city
+    }
+
+    // If subproblem has been solved before
+    if (dp[mask][pos] != -1) {
+        return dp[mask][pos];
+    }
+
+    // Initialize minimum cost to infinity
+    int ans = INT_MAX;
+
+    // Try to go to every unvisited city
+    for (int city = 0; city < n; city++) {
+        if ((mask & (1 << city)) == 0) { // If city not visited
+            int newAns = graph[pos][city] + tsp(mask | (1 << city), city, n, dp);
+            ans = min(ans, newAns);
+        }
+    }
+
+    // Store the result in dp
+    return dp[mask][pos] = ans;
+}
+
+// Driver program to test above function
+int main() {
+    // Initialize dp table with -1
+    int dp[1 << V][V];
+    for (int i = 0; i < (1 << V); i++) {
+        for (int j = 0; j < V; j++) {
+            dp[i][j] = -1;
+        }
+    }
+
+    printf("Minimum cost of visiting all cities: %d\n", tsp(1, 0, V, dp));
+    return 0;
+}
