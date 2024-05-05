@@ -1,0 +1,53 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+// Structure to represent items
+struct Item {
+    int value;
+    int weight;
+    float ratio; // value/weight ratio
+};
+
+// Function to compare items based on ratio
+int compare(const void *a, const void *b) {
+    struct Item *item1 = (struct Item *)a;
+    struct Item *item2 = (struct Item *)b;
+    return (item2->ratio - item1->ratio);
+}
+
+// Function to solve knapsack problem using Branch and Bound
+float knapsack(int capacity, struct Item items[], int n) {
+    // Sort items based on value/weight ratio
+    qsort(items, n, sizeof(items[0]), compare);
+
+    float max_value = 0; // Initialize result
+
+    // Initialize current weight and value
+    int current_weight = 0;
+    float current_value = 0.0;
+
+    // Loop through all items
+    for (int i = 0; i < n; i++) {
+        // If adding item won't exceed capacity, add it
+        if (current_weight + items[i].weight <= capacity) {
+            current_weight += items[i].weight;
+            current_value += items[i].value;
+        } else { // Otherwise, add fractional part of item
+            int remaining_capacity = capacity - current_weight;
+            current_value += items[i].ratio * remaining_capacity;
+            break;
+        }
+    }
+    return current_value;
+}
+
+int main() {
+    int capacity = 50;
+    struct Item items[] = {{60, 10}, {100, 20}, {120, 30}};
+    int n = sizeof(items) / sizeof(items[0]);
+
+    float max_value = knapsack(capacity, items, n);
+    printf("Maximum value in knapsack: %.2f\n", max_value);
+
+    return 0;
+}
